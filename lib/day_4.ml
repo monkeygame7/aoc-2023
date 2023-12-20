@@ -6,12 +6,6 @@ let rec contains value = function
   | h :: tl -> h = value || contains value tl
 ;;
 
-let rec pow n = function
-  | n when n < 0 -> 0
-  | 0 -> 1
-  | exp -> n * pow n (exp - 1)
-;;
-
 let read_winning_numbers scanner =
   let rec aux () =
     match scan scanner " %d " with
@@ -28,8 +22,7 @@ let count_points winners scanner =
     | Some n when contains n winners -> 1 + aux ()
     | Some _ -> aux ()
   in
-  let num_matches = aux () in
-  pow 2 (num_matches - 1)
+  aux ()
 ;;
 
 let score_card scanner =
@@ -38,10 +31,27 @@ let score_card scanner =
   count_points winners scanner
 ;;
 
-let rec score scanner =
-  match scan scanner "Card %d:" with
-  | None -> 0
-  | Some _ -> score scanner + score_card scanner
+let rec inc_list count amount l =
+  match count, l with
+  | 0, l -> l
+  | n, [] -> amount :: inc_list (n - 1) amount []
+  | n, h :: tl -> (h + amount) :: inc_list (n - 1) amount tl
+;;
+
+let score scanner =
+  let rec aux copies =
+    match scan scanner "Card %d:" with
+    | None -> 0
+    | Some _ ->
+      let num_cards, next_copies =
+        match copies with
+        | [] -> 1, []
+        | h :: tl -> h + 1, tl
+      in
+      let num_matches = score_card scanner in
+      num_cards + aux (inc_list num_matches num_cards next_copies)
+  in
+  aux []
 ;;
 
 let run () = Scanf.Scanning.from_file file |> score |> Printf.printf "%d\n"
