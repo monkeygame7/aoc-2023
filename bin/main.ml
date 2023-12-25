@@ -1,3 +1,3 @@
 open Aoc2023
 
-let () = Day_5.run ()
+let () = Day_6.run ()
