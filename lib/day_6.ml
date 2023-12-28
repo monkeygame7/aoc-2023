@@ -55,10 +55,21 @@ let solve_part_1 games =
   aux games
 ;;
 
+let solve_part_2 games =
+  let game =
+    List.fold_left
+      (fun (time, dist) a -> time ^ string_of_int a.time, dist ^ string_of_int a.dist)
+      ("", "")
+      games
+    |> fun (time, dist) -> { time = int_of_string time; dist = int_of_string dist }
+  in
+  solve_part_1 [ game ]
+;;
+
 let run () =
   Scanf.Scanning.from_file name
   |> parse_games
-  |> solve_part_1
+  |> solve_part_2
   |> List.fold_left ( * ) 1
   |> print_int;
   print_newline ()
