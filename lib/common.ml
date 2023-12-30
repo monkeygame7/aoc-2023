@@ -22,3 +22,5 @@ let rec sum_list l =
   | value :: rest -> value + sum_list rest
   | [] -> 0
 ;;
+
+let scan scanner fstring = Scanf.bscanf_opt scanner fstring (fun s -> s)
